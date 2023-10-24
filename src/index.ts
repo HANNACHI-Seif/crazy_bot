@@ -1,6 +1,6 @@
-
-import { Telegraf } from 'telegraf';
 import dotenv from 'dotenv'
+import { Bot, InlineKeyboard, webhookCallback } from "grammy";
+import express from "express";
 
 const sleep = async (dur: number) => {
   return new Promise((res, rej) => {
@@ -10,10 +10,10 @@ const sleep = async (dur: number) => {
 
 dotenv.config()
 
-const bot = new Telegraf(process.env.BOT_TOKEN as string);
+const bot = new Bot(process.env.BOT_TOKEN as string);
 
-bot.start((ctx) => ctx.reply('wee ki dayrin'));
-bot.help((ctx) => ctx.reply('type crazy:)'));
+bot.command("start", (ctx) => ctx.reply("Weeee ki dayrin"));
+bot.command("help", (ctx) => ctx.reply("say my name..."));
 
 bot.hears(/.*crazy.*/i, async (ctx) => {
   ctx.reply("crazy?...")
@@ -30,5 +30,19 @@ bot.hears(/.*crazy.*/i, async (ctx) => {
 }
 );
 
-bot.launch()
+// Start the server
+if (process.env.NODE_ENV === "production") {
+  // Use Webhooks for the production server
+  const app = express();
+  app.use(express.json());
+  app.use(webhookCallback(bot, "express"));
+
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Bot listening on port ${PORT}`);
+  });
+} else {
+  // Use Long Polling for development
+  bot.start();
+}
 
