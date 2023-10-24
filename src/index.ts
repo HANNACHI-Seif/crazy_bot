@@ -1,8 +1,6 @@
 
 import { Telegraf } from 'telegraf';
 import dotenv from 'dotenv'
-import express from 'express'
-import { Request, Response } from 'express'
 
 const sleep = async (dur: number) => {
   return new Promise((res, rej) => {
@@ -32,21 +30,5 @@ bot.hears(/.*crazy.*/i, async (ctx) => {
 }
 );
 
-if (process.env.NODE_ENV === "production") {
-  // Use Webhooks for the production server
-  const app = express();
-  app.use(express.json());
-
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`Bot listening on port ${PORT}`);
-  });
-  app.get('/', (req: Request, res: Response) => {
-    res.send('Yoo')
-  })
-  bot.launch();
-} else {
-  // Use Long Polling for development
-  bot.launch();
-}
+bot.launch()
 
