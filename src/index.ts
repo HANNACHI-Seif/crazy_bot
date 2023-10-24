@@ -1,6 +1,8 @@
 
 import { Telegraf } from 'telegraf';
+import { Bot, InlineKeyboard, webhookCallback } from "grammy";
 import dotenv from 'dotenv'
+import express from 'express'
 
 const sleep = async (dur: number) => {
   return new Promise((res, rej) => {
@@ -29,5 +31,19 @@ bot.hears(/.*crazy.*/i, async (ctx) => {
   ctx.reply("rats made me crazy.")
 }
 );
+
+if (process.env.NODE_ENV === "production") {
+  // Use Webhooks for the production server
+  const app = express();
+  app.use(express.json());
+
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Bot listening on port ${PORT}`);
+  });
+} else {
+  // Use Long Polling for development
+  bot.start();
+}
 
 bot.launch();
