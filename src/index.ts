@@ -1,6 +1,5 @@
 
 import { Telegraf } from 'telegraf';
-import { Bot, InlineKeyboard, webhookCallback } from "grammy";
 import dotenv from 'dotenv'
 import express from 'express'
 
@@ -41,9 +40,9 @@ if (process.env.NODE_ENV === "production") {
   app.listen(PORT, () => {
     console.log(`Bot listening on port ${PORT}`);
   });
+  bot.launch();
 } else {
   // Use Long Polling for development
-  bot.start();
+  bot.launch();
 }
 
-bot.launch();
